@@ -11,11 +11,29 @@ public class Meal {
 
     private final int calories;
 
+    private final int id;
+
+    private static int count = 0;
+
     public Meal(LocalDateTime dateTime, String description, int calories) {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
+        count++;
+        id = count;
     }
+
+    public Meal(LocalDateTime dateTime, String description, int calories, int id) {
+        this.dateTime = dateTime;
+        this.description = description;
+        this.calories = calories;
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
 
     public LocalDateTime getDateTime() {
         return dateTime;
