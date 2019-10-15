@@ -4,12 +4,15 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MealDAO implements DAO<Meal> {
     private final static Map<Integer, Meal> mealDAO = new ConcurrentHashMap<>();
+    private AtomicInteger counter = new AtomicInteger(0);
 
     static {
         for (Meal meal : MealsUtil.getMeals()){
@@ -20,7 +23,9 @@ public class MealDAO implements DAO<Meal> {
     public MealDAO(){}
 
     @Override
-    public void editOrAdd(Meal meal) {
+    public void editOrSave(Meal meal) {
+        if (meal.getId() == null)
+            meal.setId(counter.incrementAndGet());
         mealDAO.put(meal.getId(), meal);
     }
 
@@ -30,12 +35,12 @@ public class MealDAO implements DAO<Meal> {
     }
 
     @Override
-    public List<Meal> getEntities() {
-        return new ArrayList<>(mealDAO.values());
+    public Collection<Meal> getAll() {
+        return mealDAO.values();
     }
 
     @Override
-    public Meal getEntityById(int id) {
+    public Meal get(int id) {
         return mealDAO.get(id);
     }
 

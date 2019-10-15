@@ -24,7 +24,7 @@ public class MealsUtil {
         LocalTime startTime = LocalTime.of(7, 0);
         LocalTime endTime = LocalTime.of(12, 0);
 
-        List<MealTo> mealsTo = getFiltered(meals, startTime, endTime, DEFAULT_CALORIES_PER_DAY);
+        List<MealTo> mealsTo = getFilteredTo(meals, startTime, endTime, DEFAULT_CALORIES_PER_DAY);
         mealsTo.forEach(System.out::println);
 
         System.out.println(getFilteredByCycle(meals, startTime, endTime, DEFAULT_CALORIES_PER_DAY));
@@ -47,16 +47,20 @@ public class MealsUtil {
         );
     }
 
-    public static List<MealTo> getFiltered(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<MealTo> getFilteredTo(List<Meal> meals, LocalTime start, LocalTime end, int caloriesPerDay) {
         Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
                 .collect(
                         Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))
 //                      Collectors.toMap(Meal::getDate, Meal::getCalories, Integer::sum)
                 );
         return meals.stream()
-                .filter(meal -> TimeUtil.isBetween(meal.getTime(), startTime, endTime))
+                .filter(meal -> TimeUtil.isBetween(meal.getTime(), start, end))
                 .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
+    }
+
+    public static List<MealTo> getAllTo(List<Meal> meals, int caloriesPerDay){
+        return getFilteredTo(meals, LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
     }
 
     private static List<MealTo> getFilteredByCycle(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {

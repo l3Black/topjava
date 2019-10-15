@@ -1,10 +1,11 @@
 package ru.javawebinar.topjava.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface DAO<T> {
-    void editOrAdd(T entity);
+    void editOrSave(T entity);
     void delete(int id);
-    List<T> getEntities();
-    T getEntityById(int id);
+    Collection<T> getAll();
+    T get(int id);
 }
