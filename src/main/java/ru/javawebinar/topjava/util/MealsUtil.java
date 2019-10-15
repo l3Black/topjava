@@ -18,9 +18,17 @@ import static java.util.stream.Collectors.toList;
 
 public class MealsUtil {
     private static final int DEFAULT_CALORIES_PER_DAY = 2000;
+    public static List<Meal> meals = Arrays.asList(
+            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)
+    );
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        List<Meal> meals = getMeals();
+
         LocalTime startTime = LocalTime.of(7, 0);
         LocalTime endTime = LocalTime.of(12, 0);
 
@@ -36,18 +44,7 @@ public class MealsUtil {
         System.out.println(getFilteredByCollector(meals, startTime, endTime, DEFAULT_CALORIES_PER_DAY));
     }
 
-    public static List<Meal> getMeals(){
-        return Arrays.asList(
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)
-        );
-    }
-
-    public static List<MealTo> getFilteredTo(List<Meal> meals, LocalTime start, LocalTime end, int caloriesPerDay) {
+    public static List<MealTo> getFilteredTo(Collection<Meal> meals, LocalTime start, LocalTime end, int caloriesPerDay) {
         Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
                 .collect(
                         Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))
@@ -59,7 +56,7 @@ public class MealsUtil {
                 .collect(Collectors.toList());
     }
 
-    public static List<MealTo> getAllTo(List<Meal> meals, int caloriesPerDay){
+    public static List<MealTo> getAllTo(Collection<Meal> meals, int caloriesPerDay){
         return getFilteredTo(meals, LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
     }
 

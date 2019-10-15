@@ -25,6 +25,7 @@
                 </thead>
                 <tbody>
                     <jstl:forEach items="${meals}" var="meal">
+                        <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealTo"/>
                         <tr style="color: ${meal.excess ? 'crimson' : 'green'}">
                             <td>${meal.dateTime.format(formatter)}</td>
                             <td>${meal.description}</td>

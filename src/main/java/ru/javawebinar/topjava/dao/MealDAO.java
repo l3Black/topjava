@@ -14,10 +14,8 @@ public class MealDAO implements DAO<Meal> {
     private final static Map<Integer, Meal> mealDAO = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
 
-    static {
-        for (Meal meal : MealsUtil.getMeals()){
-            mealDAO.put(meal.getId(), meal);
-        }
+    {
+        MealsUtil.meals.forEach(this::editOrSave);
     }
 
     public MealDAO(){}

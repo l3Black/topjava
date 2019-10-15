@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -27,14 +28,13 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        /*request.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
         request.setAttribute("formatter", formatter);
         log.info("doGetMeal");
-        log.info(action);
 
         if (action == null || action.isEmpty() || action.equalsIgnoreCase("listMeal")){
-            List<MealTo> mealsTo = MealsUtil.getAllTo((List<Meal>) mealDAO.getAll(), 2000);
+            Collection<MealTo> mealsTo = MealsUtil.getAllTo(mealDAO.getAll(), 2000);
             request.setAttribute("meals", mealsTo);
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
         } else if (action.equalsIgnoreCase("edit") || action.equalsIgnoreCase("create")){
@@ -47,17 +47,13 @@ public class MealServlet extends HttpServlet {
         } else if (action.equalsIgnoreCase("delete")) {
             int mealId = Integer.parseInt(request.getParameter("mealId"));
             mealDAO.delete(mealId);
-            response.sendRedirect("/meals.jsp");
+            response.sendRedirect("meals");
         }
-*/      request.getRequestDispatcher("/users.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("doPostMealServlet");
-        for(String[] s : req.getParameterMap().values()){
-            log.info(Arrays.toString(s));
-        }
         req.setCharacterEncoding("UTF-8");
         String id = req.getParameter("mealId");
         LocalDateTime date = LocalDateTime.parse(req.getParameter("date"), formatter);
