@@ -1,13 +1,11 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.Before;
+import org.junit.Assume;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.repository.JpaUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
@@ -22,18 +20,6 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     protected UserService service;
 
-    @Autowired
-    private CacheManager cacheManager;
-
-    @Autowired
-    protected JpaUtil jpaUtil;
-
-    @Before
-    public void setUp() throws Exception {
-        cacheManager.getCache("users").clear();
-        jpaUtil.clear2ndLevelHibernateCache();
-    }
-
     @Test
     public void create() throws Exception {
         User newUser = getNew();
@@ -46,13 +32,13 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test(expected = DataAccessException.class)
     public void duplicateMailCreate() throws Exception {
-        service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.ROLE_USER));
+        service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.ROLE_USER, Role.ROLE_ADMIN));
     }
 
     @Test(expected = NotFoundException.class)
     public void delete() throws Exception {
-        service.delete(USER_ID);
-        service.get(USER_ID);
+        service.delete(ADMIN_ID);
+        service.get(ADMIN_ID);
     }
 
     @Test(expected = NotFoundException.class)
@@ -62,8 +48,8 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void get() throws Exception {
-        User user = service.get(USER_ID);
-        assertMatch(user, USER);
+        User user = service.get(ADMIN_ID);
+        assertMatch(user, ADMIN);
     }
 
     @Test(expected = NotFoundException.class)
@@ -73,15 +59,15 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void getByEmail() throws Exception {
-        User user = service.getByEmail("user@yandex.ru");
-        assertMatch(user, USER);
+        User user = service.getByEmail("admin@gmail.com");
+        assertMatch(user, ADMIN);
     }
 
     @Test
     public void update() throws Exception {
         User updated = getUpdated();
         service.update(updated);
-        assertMatch(service.get(USER_ID), updated);
+        assertMatch(service.get(ADMIN_ID), updated);
     }
 
     @Test
@@ -92,6 +78,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void createWithException() throws Exception {
+        Assume.assumeFalse(isJDBC());
         validateRootCause(() -> service.create(new User(null, "  ", "mail@yandex.ru", "password", Role.ROLE_USER)), ConstraintViolationException.class);
         validateRootCause(() -> service.create(new User(null, "User", "  ", "password", Role.ROLE_USER)), ConstraintViolationException.class);
         validateRootCause(() -> service.create(new User(null, "User", "mail@yandex.ru", "  ", Role.ROLE_USER)), ConstraintViolationException.class);
